@@ -1,0 +1,107 @@
+version: "3.5"
+
+services:
+  frontend_server:
+    image: client
+    build: ./client
+    ports:
+      - 3000:3000
+    depends_on:
+    - backend_server  # Ensures that the server starts before the client
+    - mongodb
+    container_name: frontend-devops
+    networks:
+      - main-network
+
+  backend_server:
+    image: server
+    build:
+      context: ./server
+    ports:
+      - 5000:5000
+    command: npm run start
+    container_name: backend_server-devops
+    depends_on:
+      - mongodb
+    networks:
+      - main-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-devops
+    ports:
+      - "27017:27017"  
+    networks:
+      - main-network
+    volumes:
+      - mongo_data:/data/db 
+
+  reverse_proxy:
+    image: nginx:1.19-alpine
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    environment:
+      - NGINX_PORT=80
+    networks:
+      - main-network
+
+networks:
+  main-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+
+
+
+
+
+
+# version: '3.8'
+
+# services:
+#   client:
+#     build:
+#       context: ./client  # Build the client from the ./client directory
+#     container_name: client
+#     ports:
+#       - "3000:80"  # Maps port 3000 on your host to port 80 inside the container (Nginx default)
+#     depends_on:
+#       - server  # Ensures that the server starts before the client
+#       - mongodb  # Ensures MongoDB is available before the client starts
+#     networks:
+#       - main-network
+
+  # server:
+  #   build:
+  #     context: ./server
+  #   container_name: server
+  #   command: npm run start
+  #   ports:
+  #     - "5000:5000"  # Expose server on localhost:5000
+  #   environment:
+  #     - MONGODB_URI=mongodb://mongodb:27017/mydatabase  # MongoDB connection string
+  #   depends_on:
+  #     - mongodb  # Ensures MongoDB is available before server starts
+  #   networks:
+  #     - main-network
+
+#   mongodb:
+#     image: mongo:latest
+#     container_name: mongodb
+#     ports:
+#       - "27017:27017"  # Expose MongoDB on localhost:27017
+#     networks:
+#       - main-network
+#     volumes:
+#       - mongo_data:/data/db  # Persistent storage for MongoDB data
+
+# networks:
+#   main-network:
+#     driver: bridge
+
+# volumes:
+#   mongo_data:
