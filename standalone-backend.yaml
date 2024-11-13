@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-server-standalone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-standalone
+  template:
+    metadata:
+      labels:
+        app: backend-standalone
+    spec:
+      containers:
+      - name: backend
+        image: rahulrm/project_mern_memories_server
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service-standalone
+spec:
+  selector:
+    app: backend-standalone
+  ports:
+  - protocol: TCP
+    port: 5000            # Cluster-internal access on port 5000
+    targetPort: 5000      # Maps to the application's port inside the container
+# Makes the service accessible only within the cluster
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: backend-server-standalone
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: backend-standalone
+#   template:
+#     metadata:
+#       labels:
+#         app: backend-standalone
+#     spec:
+#       containers:
+#       - name: backend
+#         image: rahulrm/project_mern_memories_server
+#         ports:
+#         - containerPort: 5000
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: backend-service-standalone
+# spec:
+#   selector:
+#     app: backend-standalone
+#   ports:
+#   - protocol: TCP
+#     port: 5000            # Cluster-internal access on port 5000
+#     targetPort: 5000      # Maps to the application's port inside the container
+#   clusterIP: None          # Makes the service accessible only within the cluster
+
+
+
+
+# # apiVersion: apps/v1
+# # kind: Deployment
+# # metadata:
+# #   name: backend-server-standalone
+# # spec:
+# #   replicas: 1
+# #   selector:
+# #     matchLabels:
+# #       app: backend-standalone
+# #   template:
+# #     metadata:
+# #       labels:
+# #         app: backend-standalone
+# #     spec:
+# #       containers:
+# #       - name: backend
+# #         image: rahulrm/project_mern_memories_server
+# #         ports:
+# #         - containerPort: 5000
+# # ---
+# # apiVersion: v1
+# # kind: Service
+# # metadata:
+# #   name: backend-service-standalone
+# # spec:
+# #   selector:
+# #     app: backend-standalone
+# #   type: LoadBalancer  # Exposes the service externally
+# #   ports:
+# #   - protocol: TCP
+# #     port: 5000            # External access on port 5000
+# #     targetPort: 5000      # Maps to the application's port inside the container
